@@ -8,11 +8,11 @@ import { FeeForm } from "./FeeForm";
 import { ReportFilters } from "./ReportFilters";
 
 type ReportsPageProps = {
-  searchParams?: {
+  searchParams?: Promise<{
     from?: string;
     to?: string;
     feeStatus?: string;
-  };
+  }>;
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -23,12 +23,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ReportsPage({ searchParams }: ReportsPageProps) {
+  const resolvedParams = await searchParams;
   const role = await getUserRole();
-  const from = searchParams?.from;
-  const to = searchParams?.to;
+  const from = resolvedParams?.from;
+  const to = resolvedParams?.to;
   const feeStatus =
-    searchParams?.feeStatus === "Paid" || searchParams?.feeStatus === "Pending"
-      ? searchParams.feeStatus
+    resolvedParams?.feeStatus === "Paid" ||
+    resolvedParams?.feeStatus === "Pending"
+      ? resolvedParams.feeStatus
       : undefined;
 
   const canManageFees = role === "Admin";
