@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     return new Response("Forbidden", { status: 403 });
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const params = request.nextUrl.searchParams;
   const from = params.get("from");
   const to = params.get("to");
@@ -26,12 +26,18 @@ export async function GET(request: NextRequest) {
     return new Response("Failed to export attendance.", { status: 500 });
   }
 
-  const rows = (data ?? []).map((record) => [
-    record.students?.name ?? "Unknown",
-    record.students?.grade_level ?? "—",
-    record.date,
-    record.status,
-  ]);
+  const rows = (data ?? []).map((record) => {
+    const student = Array.isArray(record.students)
+      ? record.students[0]
+      : record.students;
+
+    return [
+      student?.name ?? "Unknown",
+      student?.grade_level ?? "-",
+      record.date,
+      record.status,
+    ];
+  });
 
   const csv = toCsv(["Student", "Grade Level", "Date", "Status"], rows);
 

@@ -24,7 +24,7 @@ export async function addFee(
     };
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   try {
     const { error } = await supabase.from("fees").insert(parsed.data);
 

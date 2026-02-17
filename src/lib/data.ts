@@ -33,7 +33,7 @@ function buildAttendanceTrend(records: { date: string; status: string }[]) {
 }
 
 export async function getDashboardMetrics() {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
 
   const today = getTodayISODate();
   const [{ count: totalStudents }, { data: todayAttendance }, { data: pendingFees }] =
@@ -63,7 +63,7 @@ export async function getDashboardMetrics() {
 }
 
 export async function getStudentsWithAttendance() {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const today = getTodayISODate();
 
   const [{ data: students }, { data: attendance }] = await Promise.all([
@@ -87,7 +87,7 @@ export async function getStudentsWithAttendance() {
 }
 
 export async function getReportsSnapshot(filters: ReportFilters = {}) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const sinceDate = getISODateNDaysAgo(14);
   const attendanceFrom = filters.attendanceFrom ?? sinceDate;
 
@@ -123,7 +123,7 @@ export async function getReportsSnapshot(filters: ReportFilters = {}) {
 }
 
 export async function getStudentsForSelect() {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data: students } = await supabase
     .from("students")
     .select("id, name")
@@ -133,7 +133,7 @@ export async function getStudentsForSelect() {
 }
 
 export async function getStudentsForLinking() {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data: students } = await supabase
     .from("students")
     .select("id, name, auth_user_id")
@@ -146,7 +146,7 @@ export async function getAttendanceTrend(filters: {
   from?: string;
   to?: string;
 } = {}): Promise<AttendanceTrendItem[]> {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const from = filters.from ?? getISODateNDaysAgo(14);
   let query = supabase.from("attendance").select("date, status").gte("date", from);
 
@@ -159,7 +159,7 @@ export async function getAttendanceTrend(filters: {
 }
 
 export async function getStudentDashboard(userId?: string) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   let resolvedUserId = userId;
   if (!resolvedUserId) {
     const { data: authData } = await supabase.auth.getUser();

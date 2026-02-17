@@ -29,7 +29,7 @@ export async function markAttendance(
     };
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   try {
     const { data: existing, error: existingError } = await supabase
       .from("attendance")
@@ -97,7 +97,7 @@ export async function addStudent(
     };
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   try {
     const { error } = await supabase.from("students").insert(parsed.data);
 
@@ -149,7 +149,7 @@ export async function updateStudentLink(
     };
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const updatePayload =
     parsed.data.intent === "unlink"
       ? { auth_user_id: null }

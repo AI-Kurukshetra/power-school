@@ -22,7 +22,7 @@ export async function signIn(
     };
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   try {
     const { error } = await supabase.auth.signInWithPassword(parsed.data);
 
@@ -45,7 +45,7 @@ export async function signIn(
 }
 
 export async function signOut() {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   try {
     await supabase.auth.signOut();
   } catch {

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     return new Response("Forbidden", { status: 403 });
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const params = request.nextUrl.searchParams;
   const feeStatus = params.get("feeStatus");
   const from = params.get("from");
@@ -30,13 +30,17 @@ export async function GET(request: NextRequest) {
     return new Response("Failed to export fees.", { status: 500 });
   }
 
-  const rows = (data ?? []).map((fee) => [
-    fee.students?.name ?? "Unknown",
-    fee.students?.grade_level ?? "—",
-    fee.amount,
-    fee.status,
-    fee.due_date,
-  ]);
+  const rows = (data ?? []).map((fee) => {
+    const student = Array.isArray(fee.students) ? fee.students[0] : fee.students;
+
+    return [
+      student?.name ?? "Unknown",
+      student?.grade_level ?? "-",
+      fee.amount,
+      fee.status,
+      fee.due_date,
+    ];
+  });
 
   const csv = toCsv(
     ["Student", "Grade Level", "Amount", "Status", "Due Date"],

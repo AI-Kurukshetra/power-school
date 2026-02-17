@@ -5,12 +5,14 @@ import { createSupabaseServerClient } from "./supabase/server";
 export type UserRole = "Admin" | "Teacher" | "Student" | "Unknown";
 
 export async function getUser() {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data } = await supabase.auth.getUser();
   return data.user ?? null;
 }
 
-export async function getUserRole(user?: User | null) {
+export async function getUserRole(
+  user?: User | null
+): Promise<UserRole> {
   const currentUser = user ?? (await getUser());
   if (!currentUser) return "Unknown" as const;
 
@@ -23,7 +25,7 @@ export async function getUserRole(user?: User | null) {
   return "Unknown" as const;
 }
 
-export async function requireUser() {
+export async function requireUser(): Promise<User> {
   const user = await getUser();
   if (!user) {
     redirect("/login");
@@ -31,7 +33,7 @@ export async function requireUser() {
   return user;
 }
 
-export async function requireMember() {
+export async function requireMember(): Promise<{ user: User; role: UserRole }> {
   const user = await requireUser();
   const role = await getUserRole(user);
 
